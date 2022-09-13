@@ -45,14 +45,14 @@ d-flex flex-column justify-content-center align-items-center"
                 <label>Username</label>
                 <input
                   type="text"
-                  username="name"
+                  name="username"
                   className="form-control"
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  value={values.name}
+                  value={values.username}
                 />
-                {errors.name && touched.name && (
-                  <div className="text-danger">{errors.name}</div>
+                {errors.username && touched.username && (
+                  <div className="text-danger">{errors.username}</div>
                 )}
               </div>
               <div className="form-group">
