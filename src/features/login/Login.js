@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Formik } from "formik";
 
-export default class login extends Component {
+export default class Login extends Component {
   submit = (values, actions) => {
     console.log(values);
     setTimeout(() => {
