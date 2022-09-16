@@ -22,7 +22,14 @@ export default class App extends Component {
               </PrivateRoute>
             }
           />
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <PrivateRoute>
+                <Login />
+              </PrivateRoute>
+            }
+          />
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </Router>

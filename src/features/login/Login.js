@@ -1,14 +1,43 @@
 import React, { Component } from "react";
 import { Formik } from "formik";
+import { Navigate } from 'react-router-dom';
+import apiBni from "../../conf/axios/api.bni";
+import cookies from 'js-cookie';
+
 
 export default class Login extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { errorMessage: null };
+  }
+  
+
+  //validation du login
   submit = (values, actions) => {
-    console.log(values);
-    setTimeout(() => {
-      actions.isSubmitting = false;
-      actions.resetForm();
-    }, 1000);
+    this.setState({errorMessage:null})
+    apiBni
+      .post("/login", values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          cookies.set('BEARER', response.data.token, { sameSite:'strict' });
+          //redirection
+        }
+      })
+      //si login pas valide on update le state pour mettre un message d'erreur
+      .catch((err) => {
+        this.setState({ errorMessage: err.response.data.message });
+        actions.isSubmitting = false;
+        actions.resetForm();
+      }
+      );
   };
+
+  //validation des données
   validate = (values) => {
     let errors = {};
     if (values.name && values.name.length < 3) {
@@ -23,6 +52,15 @@ export default class Login extends Component {
         className="container-fluid p-5
 d-flex flex-column justify-content-center align-items-center"
       >
+        {/* affichage du message d'erreur */}
+        { 
+        this.state.errorMessage &&
+          <div className="alert alert-danger" role="alert">
+            { this.state.errorMessage }
+          </div>
+
+  }
+
         <Formik
           onSubmit={this.submit}
           initialValues={{ username: "", password: "" }}
