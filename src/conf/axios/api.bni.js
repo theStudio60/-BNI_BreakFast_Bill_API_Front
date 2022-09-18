@@ -1,7 +1,12 @@
 import * as axios from 'axios';
+import cookies from "js-cookie";
 
-const apiFirebase = axios.create({
-    baseURL : process.env.REACT_APP_SERVER_NAME+"/api"
+const apiBni = axios.create({
+    baseURL : process.env.REACT_APP_SERVER_NAME+"/api",
+    headers: {
+        'Content-Type': 'application/ld+json',
+        Authorization: "Bearer " + cookies.get("BEARER"),
+    },
 });
 
-export default apiFirebase;
+export default apiBni;
