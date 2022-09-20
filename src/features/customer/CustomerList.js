@@ -1,6 +1,7 @@
 import { Component } from "react";
-import apiBni from "../../../conf/axios/api.bni";
-import { Loading, ErrorMessage } from "../../../components/utils";
+import apiBni from "../../conf/axios/api.bni";
+import { Loading, Alert } from "../../components/utils";
+import { NavLink } from "react-router-dom";
 
 export default class CustomerList extends Component {
   constructor(props) {
@@ -28,13 +29,13 @@ export default class CustomerList extends Component {
       <>
         {/* affichage du message d'erreur */}
         {this.state.errorMessage && (
-          <ErrorMessage message={this.state.errorMessage} color="danger" />
+          <Alert message={this.state.errorMessage} color="danger" />
         )}
         {this.state.loaded || this.state.customers === null ? (
           <Loading />
         ) : (
           this.state.customers["hydra:member"].map((customer, index) => (
-            <div key={customer.id}>{customer.firstname+' '+customer.lastname}</div>
+            <NavLink to={ "/customer-details/"+customer.id } className="nav-link" key={customer.id}>{customer.firstname+' '+customer.lastname}</NavLink>
           ))
         )}
       </>

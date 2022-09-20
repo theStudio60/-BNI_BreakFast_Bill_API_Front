@@ -15,7 +15,7 @@ export default class App extends Component {
       <Router>
         <Routes>
           <Route
-            path="/"
+            path="*"
             element={
               <PrivateRoute>
                 <Home />
@@ -30,7 +30,6 @@ export default class App extends Component {
               </PrivateRoute>
             }
           />
-          <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </Router>
     );

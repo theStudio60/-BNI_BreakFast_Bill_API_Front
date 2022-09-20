@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import { Navigate } from "react-router-dom";
 import * as axios from "axios";
 import cookies from "js-cookie";
-import { Loading, ErrorMessage } from "../../components/utils";
+import { Loading, Alert } from "../../components/utils";
 
 export default class Login extends Component {
   constructor(props) {
@@ -45,8 +45,11 @@ export default class Login extends Component {
   //validation des données
   validate = (values) => {
     let errors = {};
-    if (values.name && values.name.length < 3) {
-      errors.name = "Nom trop court";
+    if (!values.username && values.username.length < 3) {
+      errors.username = "Nom trop court";
+    }
+    if (!values.password) {
+      errors.password = "Veuillez inserer un mot de passe";
     }
     return errors;
   };
@@ -65,7 +68,7 @@ export default class Login extends Component {
           <div className="container-fluid p-5 d-flex flex-column justify-content-center align-items-center">
             {/* affichage du message d'erreur */}
             {this.state.errorMessage && (
-              <ErrorMessage message={this.state.errorMessage} color="danger" />
+              <Alert message={this.state.errorMessage} color="danger" />
             )}
 
             <Formik
@@ -110,6 +113,9 @@ export default class Login extends Component {
                       onBlur={handleBlur}
                       value={values.password}
                     />
+                    {errors.password && touched.password && (
+                      <div className="text-danger">{errors.password}</div>
+                    )}                    
                   </div>
                   <button
                     type="submit"
