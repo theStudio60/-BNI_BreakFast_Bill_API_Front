@@ -3,19 +3,19 @@ import apiBni from "../../../conf/axios/api.bni";
 import { Loading, Alert } from "../../../components/utils";
 import { NavLink } from "react-router-dom";
 
-export default class SessionPlaceList extends Component {
+export default class SessionTypesList extends Component {
   constructor(props) {
     super(props);
-    this.state = { sessionsPlace: null, errorMessage: null, loaded: true };
+    this.state = { sessionsType: null, errorMessage: null, loaded: true };
   }
 
   componentDidMount() {
     apiBni
-      .get("/session_places?page=1&itemsPerPage=30", {})
+      .get("/session_types?page=1&itemsPerPage=30", {})
       .then((response) => {
         if (response.status === 200) {
-          const sessionsPlace = response.data;
-          this.setState({ sessionsPlace: sessionsPlace, loaded: false });
+          const sessionsType = response.data;
+          this.setState({ sessionsType: sessionsType, loaded: false });
         }
       })
       //si sessionPlace pas valide on update le state pour mettre un message d'erreur
@@ -31,11 +31,11 @@ export default class SessionPlaceList extends Component {
         {this.state.errorMessage && (
           <Alert message={this.state.errorMessage} color="danger" />
         )}
-        {this.state.loaded || this.state.sessionsPlace === null ? (
+        {this.state.loaded || this.state.sessionsType === null ? (
           <Loading />
         ) : (
-          this.state.sessionsPlace["hydra:member"].map((sessionPlace, index) => (
-            <NavLink to={ "/session-place/"+sessionPlace.id } className="nav-link" key={sessionPlace.id}>{sessionPlace.zip_code+' '+sessionPlace.city}</NavLink>
+          this.state.sessionsType["hydra:member"].map((sessionType, index) => (
+            <NavLink to={ "/session-type/"+sessionType.id } className="nav-link" key={sessionType.id}>{sessionType.name}</NavLink>
           ))
         )}
       </>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Formik, Field, isInteger } from "formik";
+import { Formik, Field } from "formik";
 import apiBni from "../../conf/axios/api.bni";
 import { Loading, Alert } from "../../components/utils";
 import * as Yup from "yup";
@@ -55,6 +55,7 @@ export default class CustomerNew extends Component {
     //on affiche le formulaire
     return (
       <>
+        {console.log(this.dateDay)}
         {this.state.loaded ? (
           <Loading />
         ) : (
@@ -66,7 +67,7 @@ export default class CustomerNew extends Component {
 
             <Formik
               onSubmit={this.submit}
-              initialValues={{ firstname: "", lastname: "", street: "", streetNumber: "", zipCode: "", city: "", company: "", email: "", memberShip_at: "25.08.2022" }}
+              initialValues={{ firstname: "", lastname: "", street: "", streetNumber: "", zipCode: "", city: "", company: "", email: "", memberShip_at:"" }}
               validationSchema = { this.customerSchema }
             >
               {({

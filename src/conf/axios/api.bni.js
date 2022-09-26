@@ -5,7 +5,7 @@ const apiBni = axios.create({
     baseURL : process.env.REACT_APP_SERVER_NAME+"/api",
     headers: {
         'Content-Type': 'application/ld+json',
-        Authorization: "Bearer " + cookies.get("BEARER"),
+        Authorization: "Bearer " + cookies.get("BEARER")
     },
 });
 

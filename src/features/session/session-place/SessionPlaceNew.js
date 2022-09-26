@@ -10,7 +10,7 @@ export default class SessionPlaceNew extends Component {
     this.state = { message: null, messageColor:null, loaded: false};
   }
 
-  //validation du login
+  //validation du formulaire
   submit = (values, actions) => {
     this.setState({ message: null, loaded: true });
 
@@ -31,7 +31,7 @@ export default class SessionPlaceNew extends Component {
       .catch((err) => {
         this.setState({
             message: err.response.data.message,
-            messageColor: "alert",
+            messageColor: "danger",
             loaded: false,
         });
         actions.isSubmitting = false;
@@ -39,7 +39,7 @@ export default class SessionPlaceNew extends Component {
   };
 
   //validation des données
-  customerSchema = Yup.object().shape({
+  SessionPlaceSchema = Yup.object().shape({
     street: Yup.string().min(3, 'Nom de rue trop court').required('Veuillez indiquer un nom de rue'),
     streetNumber: Yup.string().min(1, 'Veuillez indiquer un numéro de rue'),
     zipCode: Yup.number().min(1000, 'Le code zip doit être de min 4 chiffres').max(9999, 'Le code zip doit être de max 4 chiffre').required('Veuillez indiquer un code postal'),
@@ -62,7 +62,7 @@ export default class SessionPlaceNew extends Component {
             <Formik
               onSubmit={this.submit}
               initialValues={{ street: "", streetNumber: "", zipCode: "", city: "" }}
-              validationSchema = { this.customerSchema }
+              validationSchema = { this.SessionPlaceSchema }
             >
               {({
                 values,

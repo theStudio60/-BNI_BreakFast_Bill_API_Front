@@ -1,12 +1,11 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import apiBni from "../../conf/axios/api.bni";
 import { Loading, Alert } from "../../components/utils";
 
-export default class CustomerDetails extends Component {
-
+export default class ItemDetails extends Component {
   constructor(props) {
     super(props);
-    this.state = { customer: null, errorMessage: null, loaded: true };
+    this.state = { item: null, errorMessage: null, loaded: true };
   }
 
   componentDidMount() {
@@ -16,16 +15,16 @@ export default class CustomerDetails extends Component {
 
     //Requete pour récuperer id
     apiBni
-      .get("/customers/"+id, {})
+      .get("/items/"+id, {})
       .then((response) => {
         if (response.status === 200) {
-          const customer = response.data;
-          this.setState({ customer: customer, loaded: false });
+          const item = response.data;
+          this.setState({ item: item, loaded: false });
         }
       })
-      //si customer pas valide on update le state pour mettre un message d'erreur
+      //si item pas valide on update le state pour mettre un message d'erreur
       .catch((err) => {
-        this.setState({ errorMessage: "Une erreur est survenue !", loaded: false });
+        this.setState({ errorMessage: err.message, loaded: false });
       });
   }
 
@@ -35,11 +34,11 @@ export default class CustomerDetails extends Component {
         {/* affichage du message d'erreur */}
         {this.state.errorMessage && (
           <Alert message={this.state.errorMessage} color="danger" />
-        )}      
-        {this.state.loaded || this.state.customer === null ? (
+        )}
+        {this.state.loaded || this.state.item === null ? (
           <Loading />
         ) : (
-          this.state.customer.id+' - '+this.state.customer.firstname
+          this.state.item.id+' - '+this.state.item.name
         )}
       </>
     );

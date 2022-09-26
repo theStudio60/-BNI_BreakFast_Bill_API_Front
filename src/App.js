@@ -3,11 +3,11 @@ import "./App.css";
 import {
   BrowserRouter as Router,
   Route,
-  Navigate,
   Routes,
 } from "react-router-dom";
 import { Login, Home } from "./features";
 import { PrivateRoute } from "./components/utils";
+import AppRoutes from "./conf/AppRoutes";
 
 export default class App extends Component {
   render() {
