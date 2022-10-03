@@ -1,67 +1,46 @@
-import React, { Component } from "react";
 import { Formik, Field } from "formik";
 import apiBni from "../../conf/axios/api.bni";
-import { Loading, Alert } from "../../components/utils";
 import * as Yup from "yup";
+import { useDispatch } from "react-redux";
+import { addItem, setAlert } from "../../redux";
 
-export default class ItemNew extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { message: null, messageColor:null, loaded: false};
-  }
+export default function ItemNew() {
 
-  //validation du login
-  submit = (values, actions) => {
-    this.setState({ message: null, loaded: true });
+  const dispatch = useDispatch();
 
-    //creation de la requete
+  //creation de la requete
+  const submit = (values, actions) => {
     apiBni
       .post("/items", values, {})
       .then((response) => {
         if (response.status === 201) {
-            this.setState({
-                message: "Item crée avec succès",
-                messageColor: "success",
-                loaded: false,
-            });
-        // actions.resetForm();
+            actions.isSubmitting = false;
+            actions.resetForm();
+            dispatch(addItem(response))
+            dispatch(setAlert({ "color":"success", "message":"Item ajouté."}));
         }
       })
       //si erreur on update le state pour mettre un message d'erreur
       .catch((err) => {
-        this.setState({
-            message: err.response.data.message,
-            messageColor: "alert",
-            loaded: false,
-        });
         actions.isSubmitting = false;
       });
   };
 
   //validation des données
-  itemSchema = Yup.object().shape({
+  const itemSchema = Yup.object().shape({
     name: Yup.string().min(3, 'Prénom trop court').required('Veuillez indiquer un prénom'),
     priceOf: Yup.string().matches(/^\d+(.\d{1,2})?$/, 'Format invalide')
 });
 
-  render() {
     //on affiche le formulaire
     return (
       <>
-        {console.log(this.dateDay)}
-        {this.state.loaded ? (
-          <Loading />
-        ) : (
           <div className="container-fluid p-5 d-flex flex-column justify-content-center align-items-center">
-            {/* affichage du message d'erreur */}
-            {this.state.message && (
-              <Alert message={this.state.message} color={this.state.messageColor} />
-            )}
 
             <Formik
-              onSubmit={this.submit}
+              onSubmit={submit}
               initialValues={{ name: "", priceOf: ""}}
-              validationSchema = { this.itemSchema }
+              validationSchema = { itemSchema }
             >
               {({
                 values,
@@ -113,8 +92,6 @@ export default class ItemNew extends Component {
               )}
             </Formik>
           </div>
-        )}
       </>
     );
   }
-}

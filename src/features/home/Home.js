@@ -1,6 +1,8 @@
 import React from "react";
+import { Alert } from "../../components/utils";
 import { Header, SideBar } from "../../components";
 import AppRoutes from "../../conf/AppRoutes";
+import { useSelector } from "react-redux";
 
 
 export default function Home() {
@@ -15,9 +17,12 @@ export default function Home() {
           <SideBar />
         </div>
         <div className="col-8">
+          {/* affichage des alerts */}
+          <Alert />
           <AppRoutes />
         </div>
       </div>
     </div>
   );
+
 }

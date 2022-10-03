@@ -1,44 +1,49 @@
-import { Component } from "react";
-import apiBni from "../../conf/axios/api.bni";
-import { Loading, Alert } from "../../components/utils";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import apiBni from "../../conf/axios/api.bni";
+import { setAlert, setItem } from "../../redux";
+import { Loading } from "../../components/utils";
 
-export default class ItemsList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { items: null, errorMessage: null, loaded: true };
-  }
-
-  componentDidMount() {
-    apiBni
-      .get("/items?page=1&itemsPerPage=10", {})
+//création de la requete
+export const fetchItems = () => {
+  return async (dispatch, getState) => {
+    await apiBni
+      .get("/items?page=1&itemsPerPage=30")
       .then((response) => {
         if (response.status === 200) {
-          const items = response.data;
-          this.setState({ items: items, loaded: false });
+          dispatch(setItem(response));
         }
       })
-      //si erreur on update le state pour mettre un message d'erreur
+      //si item pas valide on update le state pour mettre un message d'erreur
       .catch((err) => {
-        this.setState({ errorMessage: err.message, loaded: false });
+        dispatch(setAlert({ "color":"danger", "message":"Une erreur est survenue !"}));
       });
-  }
+  };
+};
 
-  render() {
+export default function ItemsList() {
+
+  const items = useSelector((state) => state.items.data);
+  const dispatch = useDispatch();
+
+  //création de notre requete API avec useEffect
+  useEffect(() => {
+    dispatch(fetchItems());
+  }, []);
+
+  if(items){
     return (
       <>
-        {/* affichage du message d'erreur */}
-        {this.state.errorMessage && (
-          <Alert message={this.state.errorMessage} color="danger" />
-        )}
-        {this.state.loaded || this.state.items === null ? (
-          <Loading />
-        ) : (
-          this.state.items["hydra:member"].map((item, index) => (
-            <NavLink to={ "/item/"+item.id } className="nav-link" key={item.id}>{item.name}</NavLink>
-          ))
-        )}
+        {items["hydra:member"].map((item, index) => (
+          <NavLink to={"/item/" + item.id} className="nav-link" key={item.id}>
+            { item.id+" - "+item.name }
+          </NavLink>
+        ))}
       </>
     );
+  }else{
+    return <Loading />
   }
 }

@@ -27,8 +27,11 @@ export default class Login extends Component {
       })
       .then((response) => {
         if (response.status === 200) {
-          cookies.set("BEARER", response.data.token, { sameSite: "strict" });
+          // création du cookie
+          cookies.set("BEARER", response.data.token, { sameSite: "strict", expires: new Date(new Date().getTime() + 5 * 60 * 1000) }); //5minutes
           this.setState({ auth: true });
+          //on raffraichit la page pour éviter le bug du cookie pas valide
+          window.location.reload();
         }
       })
       //si login pas valide on update le state pour mettre un message d'erreur

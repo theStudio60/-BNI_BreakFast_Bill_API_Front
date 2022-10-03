@@ -8,7 +8,7 @@ import {
   SessionTypesList,
   SessionTypeDetails,
   SessionNew,
-  SessionList,
+  SessionsList,
   SessionDetails,
 } from "../features/session";
 import { ItemsList, ItemNew, ItemDetails } from "../features/item";
@@ -39,7 +39,7 @@ export default function AppRoutes(){
         />
         <Route path="/new-session-type" element={<SessionTypeNew />} />
         {/* Session */}
-        <Route path="/sessions" element={<SessionList />} />
+        <Route path="/sessions" element={<SessionsList />} />
         <Route
           path="/session/:id"
           element={<SessionDetails path={useParams()} />}

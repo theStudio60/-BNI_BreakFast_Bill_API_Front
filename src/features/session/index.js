@@ -7,5 +7,5 @@ export { default as SessionTypesList } from './session-type/SessionTypesList';
 export { default as SessionTypeDetails } from './session-type/SessionTypeDetails';
 
 export { default as SessionNew } from './session/SessionNew';
-export { default as SessionList } from './session/SessionsList';
+export { default as SessionsList } from './session/SessionsList';
 export { default as SessionDetails } from './session/SessionDetails';

@@ -1,44 +1,47 @@
-import { Component } from "react";
-import apiBni from "../../../conf/axios/api.bni";
-import { Loading, Alert } from "../../../components/utils";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import apiBni from "../../../conf/axios/api.bni";
+import { setAlert, setSessions } from "../../../redux";
+import { Loading } from "../../../components/utils";
 
-export default class SessionsList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { session: null, errorMessage: null, loaded: true };
-  }
-
-  componentDidMount() {
-    apiBni
-      .get("/sessions?page=1&itemsPerPage=30", {})
+//création de la requete
+const fetchSessions = () => {
+  return async (dispatch) => {
+    await apiBni
+      .get("/sessions?page=1&itemsPerPage=30")
       .then((response) => {
         if (response.status === 200) {
-          const session = response.data;
-          this.setState({ session: session, loaded: false });
+          dispatch(setSessions(response));
         }
       })
-      //si sessionPlace pas valide on update le state pour mettre un message d'erreur
+      //si item pas valide on update le state pour mettre un message d'erreur
       .catch((err) => {
-        this.setState({ errorMessage: err.message, loaded: false });
+        dispatch(setAlert({ "color":"danger", "message":"Une erreur est survenue !"}));
       });
-  }
+  };
+};
 
-  render() {
+export default function SessionsList() {
+
+  const sessions = useSelector((state) => state.sessions.data);
+  const dispatch = useDispatch();
+
+  //création de notre requete API avec useEffect
+  useEffect(() => {
+    dispatch(fetchSessions());
+  }, []);
+
+  if(sessions){
     return (
       <>
-        {/* affichage du message d'erreur */}
-        {this.state.errorMessage && (
-          <Alert message={this.state.errorMessage} color="danger" />
-        )}
-        {this.state.loaded || this.state.session === null ? (
-          <Loading />
-        ) : (
-          this.state.session["hydra:member"].map((session, index) => (
-            <NavLink to={ "/session/"+session.id } className="nav-link" key={session.id}>{session.session_type.name}</NavLink>
-          ))
-        )}
+        {sessions["hydra:member"].map((session, index) => (
+          <NavLink to={ "/session/"+session.id } className="nav-link" key={session.id}>{session.session_type.name}</NavLink>
+        ))}
       </>
     );
+  }else{
+    return <Loading />
   }
 }

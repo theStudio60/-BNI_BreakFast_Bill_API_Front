@@ -1,44 +1,54 @@
-import { Component } from "react";
-import apiBni from "../../../conf/axios/api.bni";
-import { Loading, Alert } from "../../../components/utils";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import apiBni from "../../../conf/axios/api.bni";
+import { setAlert, setSessionPlaces } from "../../../redux";
+import { Loading } from "../../../components/utils";
 
-export default class SessionPlacesList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { sessionsPlace: null, errorMessage: null, loaded: true };
-  }
-
-  componentDidMount() {
-    apiBni
-      .get("/session_places?page=1&itemsPerPage=30", {})
+//création de la requete
+const fetchSessionPlaces = () => {
+  return async (dispatch) => {
+    await apiBni
+      .get("/session_places?page=1&itemsPerPage=30")
       .then((response) => {
         if (response.status === 200) {
-          const sessionsPlace = response.data;
-          this.setState({ sessionsPlace: sessionsPlace, loaded: false });
+          dispatch(setSessionPlaces(response));
         }
       })
-      //si sessionPlace pas valide on update le state pour mettre un message d'erreur
+      //si item pas valide on update le state pour mettre un message d'erreur
       .catch((err) => {
-        this.setState({ errorMessage: err.message, loaded: false });
+        dispatch(
+          setAlert({ color: "danger", message: "Une erreur est survenue !" })
+        );
       });
-  }
+  };
+};
 
-  render() {
+export default function SessionPlacesList() {
+  const sessionPlaces = useSelector((state) => state.sessionPlaces.data);
+  const dispatch = useDispatch();
+
+  //création de notre requete API avec useEffect
+  useEffect(() => {
+    dispatch(fetchSessionPlaces());
+  }, []);
+
+  if (sessionPlaces) {
     return (
       <>
-        {/* affichage du message d'erreur */}
-        {this.state.errorMessage && (
-          <Alert message={this.state.errorMessage} color="danger" />
-        )}
-        {this.state.loaded || this.state.sessionsPlace === null ? (
-          <Loading />
-        ) : (
-          this.state.sessionsPlace["hydra:member"].map((sessionPlace, index) => (
-            <NavLink to={ "/session-place/"+sessionPlace.id } className="nav-link" key={sessionPlace.id}>{sessionPlace.zip_code+' '+sessionPlace.city}</NavLink>
-          ))
-        )}
+        {sessionPlaces["hydra:member"].map((sessionPlace, index) => (
+          <NavLink
+            to={"/session-place/" + sessionPlace.id}
+            className="nav-link"
+            key={sessionPlace.id}
+          >
+            {sessionPlace.zip_code + " " + sessionPlace.city}
+          </NavLink>
+        ))}
       </>
     );
+  } else {
+    return <Loading />;
   }
 }
