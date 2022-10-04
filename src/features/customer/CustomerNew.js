@@ -1,74 +1,134 @@
 import React, { Component } from "react";
 import { Formik, Field } from "formik";
-import apiBni from "../../conf/axios/api.bni";
+import apiBni, { apiBni_Parser } from "../../conf/axios/api.bni";
 import { Loading, Alert } from "../../components/utils";
 import * as Yup from "yup";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 export default class CustomerNew extends Component {
   constructor(props) {
     super(props);
-    this.state = { message: null, messageColor:null, loaded: false};
+    this.state = { company: "", firstname: "", lastname: "", email: "", street: "", city: "", zipCode: "", phone: "" };
   }
 
-  //validation du login
-  submit = (values, actions) => {
-    this.setState({ message: null, loaded: true });
+  //cache element popur les fichier vcard
+  componentDidMount() {
+    document.getElementById("fileForm").style.cssText = "display:none !important";
+  }
 
+  //si ouverture Vcard on cache le formulaire utilisateur et on affiche le formulaire pour chargement de la Vcard
+  openVcard() {
+    document.getElementById("newCustomerForm").style.cssText = "display:none !important";
+    document.getElementById("fileForm").style.cssText = "display:flex";
+  }
+
+  //fonction envoi de la vcard
+  submitFile = (values, actions) => {
+    const formdata = new FormData();
+    let file = document.querySelector("#vcardfile");
+    formdata.append("file", file.files[0])
+    axios.post(process.env.REACT_APP_SERVER_NAME+"/api/vcard/parser", formdata, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: "Bearer " + Cookies.get("BEARER")
+    }
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        console.log(response.data.data);
+        const data = response.data.data;
+        actions.isSubmitting = false;
+        actions.resetForm();
+        document.getElementById("newCustomerForm").style.cssText = "display:flex !important";
+        document.getElementById("fileForm").style.cssText = "display:none !important"; 
+        //update du state pour mettre à jour les chants formulaire
+        this.setState({
+          company: data.company, 
+          firstname: data.firstname,
+          lastname: data.lastname,
+          email: data.email,
+          street: data.street,
+          city: data.city,
+          zipCode: data.zipCode,
+          phone: data.phone
+        });
+      }
+    })
+    //si erreur on update le state pour mettre un message d'erreur
+    .catch((err) => {
+      actions.isSubmitting = false;
+    });
+  };
+
+  ///////////////////////////////////////////////
+  //fonction enregistrement d'un nouveau customer
+  submit = (values, actions) => {
     //creation de la requete
     apiBni
       .post("/customers", values, {})
       .then((response) => {
         if (response.status === 201) {
-            this.setState({
-                message: "Client crée avec succès",
-                messageColor: "success",
-                loaded: false,
-            });
-        // actions.resetForm();
+          // actions.resetForm();
         }
       })
       //si erreur on update le state pour mettre un message d'erreur
       .catch((err) => {
-        this.setState({
-            message: err.response.data.message,
-            messageColor: "alert",
-            loaded: false,
-        });
         actions.isSubmitting = false;
       });
   };
 
   //validation des données
   customerSchema = Yup.object().shape({
-    firstname: Yup.string().min(3, 'Prénom trop court').required('Veuillez indiquer un prénom'),
-    lastname: Yup.string().min(3, 'Nom trop court').required('Veuillez indiquer un nom'),
-    street: Yup.string().min(3, 'Nom de rue trop court').required('Veuillez indiquer un nom de rue'),
-    streetNumber: Yup.string().min(1, 'Veuillez indiquer un numéro de rue'),
-    zipCode: Yup.number().min(1000, 'Le code zip doit être de min 4 chiffres').max(9999, 'Le code zip doit être de max 4 chiffre').required('Veuillez indiquer un code postal'),
-    city: Yup.string().min(3, 'Nom de ville trop court').required('Veuillez indiquer une ville'),
-    company: Yup.string().min(3, 'Nom entreprise trop court').required('Veuillez indiquer une entreprise'),
-    email: Yup.string().email(3, 'Email non valide').required('Veuillez indiquer un email'),
-    memberShip_at: Yup.string().matches(/^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/, 'Format dd.mm.yyyy')
-});
+    firstname: Yup.string()
+      .min(3, "Prénom trop court")
+      .required("Veuillez indiquer un prénom"),
+    lastname: Yup.string()
+      .min(3, "Nom trop court")
+      .required("Veuillez indiquer un nom"),
+    street: Yup.string()
+      .min(3, "Nom de rue trop court")
+      .required("Veuillez indiquer un nom de rue"),
+    streetNumber: Yup.string().min(1, "Veuillez indiquer un numéro de rue"),
+    zipCode: Yup.number()
+      .min(1000, "Le code zip doit être de min 4 chiffres")
+      .max(9999, "Le code zip doit être de max 4 chiffre")
+      .required("Veuillez indiquer un code postal"),
+    city: Yup.string()
+      .min(3, "Nom de ville trop court")
+      .required("Veuillez indiquer une ville"),
+    company: Yup.string()
+      .min(3, "Nom entreprise trop court")
+      .required("Veuillez indiquer une entreprise"),
+    email: Yup.string()
+      .email(3, "Email non valide")
+      .required("Veuillez indiquer un email"),
+    memberShip_at: Yup.string().matches(
+      /^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/,
+      "Format dd.mm.yyyy"
+    ),
+  });
 
   render() {
     //on affiche le formulaire
     return (
       <>
-        {console.log(this.dateDay)}
-        {this.state.loaded ? (
-          <Loading />
-        ) : (
           <div className="container-fluid p-5 d-flex flex-column justify-content-center align-items-center">
-            {/* affichage du message d'erreur */}
-            {this.state.message && (
-              <Alert message={this.state.message} color={this.state.messageColor} />
-            )}
-
             <Formik
               onSubmit={this.submit}
-              initialValues={{ firstname: "", lastname: "", street: "", streetNumber: "", zipCode: "", city: "", company: "", email: "", memberShip_at:"" }}
-              validationSchema = { this.customerSchema }
+              initialValues={{
+                firstname: this.state.firstname,
+                lastname: this.state.lastname,
+                street: this.state.street,
+                streetNumber: "",
+                zipCode: this.state.zipCode,
+                city: this.state.city,
+                company: this.state.company,
+                email: this.state.email,
+                memberShip_at: "",
+              }}
+              enableReinitialize //permet de mettre à jour le formulaire avec le state
+              validationSchema={this.customerSchema}
             >
               {({
                 values,
@@ -82,6 +142,7 @@ export default class CustomerNew extends Component {
                 <form
                   onSubmit={handleSubmit}
                   className="bg-white border p-5 d-flex flex-column"
+                  id="newCustomerForm"
                 >
                   <div className="form-group">
                     <label>Prénom</label>
@@ -108,7 +169,7 @@ export default class CustomerNew extends Component {
                     {errors.lastname && touched.lastname && (
                       <div className="text-danger">{errors.lastname}</div>
                     )}
-                  </div>      
+                  </div>
                   <div className="form-group">
                     <label>Rue</label>
                     <Field
@@ -121,7 +182,7 @@ export default class CustomerNew extends Component {
                     {errors.street && touched.street && (
                       <div className="text-danger">{errors.street}</div>
                     )}
-                  </div>  
+                  </div>
                   <div className="form-group">
                     <label>Numéro de rue</label>
                     <Field
@@ -134,7 +195,7 @@ export default class CustomerNew extends Component {
                     {errors.streetNumber && touched.streetNumber && (
                       <div className="text-danger">{errors.streetNumber}</div>
                     )}
-                  </div>          
+                  </div>
                   <div className="form-group">
                     <label>Code postal</label>
                     <Field
@@ -148,7 +209,7 @@ export default class CustomerNew extends Component {
                     {errors.zipCode && touched.zipCode && (
                       <div className="text-danger">{errors.zipCode}</div>
                     )}
-                  </div>       
+                  </div>
                   <div className="form-group">
                     <label>Ville</label>
                     <Field
@@ -161,7 +222,7 @@ export default class CustomerNew extends Component {
                     {errors.city && touched.city && (
                       <div className="text-danger">{errors.city}</div>
                     )}
-                  </div>         
+                  </div>
                   <div className="form-group">
                     <label>Entreprise</label>
                     <Field
@@ -174,7 +235,7 @@ export default class CustomerNew extends Component {
                     {errors.company && touched.company && (
                       <div className="text-danger">{errors.company}</div>
                     )}
-                  </div>    
+                  </div>
                   <div className="form-group">
                     <label>Email</label>
                     <Field
@@ -187,7 +248,7 @@ export default class CustomerNew extends Component {
                     {errors.email && touched.email && (
                       <div className="text-danger">{errors.email}</div>
                     )}
-                  </div>          
+                  </div>
                   <div className="form-group">
                     <label>Membre depuis</label>
                     <Field
@@ -200,19 +261,70 @@ export default class CustomerNew extends Component {
                     {errors.memberShip_at && touched.memberShip_at && (
                       <div className="text-danger">{errors.memberShip_at}</div>
                     )}
-                  </div>       
+                  </div>
                   <button
                     type="submit"
                     className="btn btn-primary"
                     disabled={isSubmitting}
                   >
-                    Envoyer
+                    Enregistrer
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={isSubmitting}
+                    onClick={this.openVcard}
+                  >
+                    Vcard
+                  </button>
+                </form>
+              )}
+            </Formik>
+
+            <Formik
+              onSubmit={this.submitFile}
+              initialValues={{ file: "" }}
+              validate={this.validate}
+            >
+              {({
+                values,
+                handleBlur,
+                handleChange,
+                handleSubmit,
+                isSubmitting,
+                errors,
+                touched,
+              }) => (
+                <form
+                  onSubmit={handleSubmit}
+                  className="bg-white border p-5 d-flex flex-column"
+                  id="fileForm"
+                >
+                  <div className="form-group">
+                    <input
+                      type="file"
+                      name="file"
+                      id="vcardfile"
+                      className="form-control"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.file}
+                    />
+                    {errors.file && touched.file && (
+                      <div className="text-danger">{errors.file}</div>
+                    )}
+                  </div>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={isSubmitting}
+                  >
+                    Charger
                   </button>
                 </form>
               )}
             </Formik>
           </div>
-        )}
       </>
     );
   }

@@ -9,4 +9,12 @@ const apiBni = axios.create({
     },
 });
 
+export const apiBni_Parser = axios.create({
+    baseURL : process.env.REACT_APP_SERVER_NAME+"/api",
+    headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: "Bearer " + cookies.get("BEARER")
+    },
+});
+
 export default apiBni;
