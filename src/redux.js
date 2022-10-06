@@ -97,6 +97,22 @@ const sessionsTypeSlice = createSlice({
 });
 
 export const { setSessionTypes } = sessionsTypeSlice.actions;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// User
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const UserSlice = createSlice({
+  name: "user",
+  initialState: [],
+  reducers: {
+    setUser: (state, action) => {
+      return { ...action.payload };  
+    }      
+  },
+});
+
+export const { setUser } = UserSlice.actions;
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create store
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -109,6 +125,7 @@ export const store = configureStore({
     sessions: sessionsSlice.reducer,
     sessionPlaces: sessionPlacesSlice.reducer,
     sessionTypes: sessionsTypeSlice.reducer,
+    user: UserSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({

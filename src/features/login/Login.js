@@ -1,52 +1,54 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
-import { Navigate } from "react-router-dom";
 import * as axios from "axios";
 import cookies from "js-cookie";
 import { Loading, Alert } from "../../components/utils";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../redux";
 
-export default class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { errorMessage: null, loaded: false, auth: false };
-  }
+export default function Login(props) {
+  const [loaded, setLoaded] = useState(false);
+  let dispatch = useDispatch();
 
   //validation du login
-  submit = (values, actions) => {
-    this.setState({ errorMessage: null, loaded: true });
-
+  const submit = (values, actions) => {
+    //on passe setLoaded à true pour afficher le chargement en attendant la réponse
+    setLoaded(true);
     //creation de la requete
-    const requete = axios.create({
-      baseURL: process.env.REACT_APP_SERVER_NAME + "/api",
-    });
-    requete
-      .post("/login", values, {
+    axios
+      .post(process.env.REACT_APP_SERVER_NAME + "/api/login", values, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((response) => {
         if (response.status === 200) {
-          // création du cookie
-          cookies.set("BEARER", response.data.token, { sameSite: "strict", expires: new Date(new Date().getTime() + 5 * 60 * 1000) }); //5minutes
-          this.setState({ auth: true });
-          //on raffraichit la page pour éviter le bug du cookie pas valide
-          window.location.reload();
+          //si le login est bon on fait un reload ce qui nous redirigera vers la page d'accueil et évite un bug de cookie
+            // création du cookie //inclus le token et les datas
+            const cookiesData = JSON.stringify(response.data);
+            cookies.set("APICOOKIE", cookiesData, {
+              sameSite: "strict",
+              expires: new Date(new Date().getTime() + 5 * 60 * 1000),
+            }); //5minutes
+            window.location.reload();          
         }
       })
       //si login pas valide on update le state pour mettre un message d'erreur
       .catch((err) => {
-        this.setState({
-          errorMessage: err.response.data.message,
-          loaded: false,
-        });
+        setLoaded(false);
         actions.isSubmitting = false;
         actions.resetForm();
+        dispatch(
+          setAlert({
+            color: "danger",
+            message: "Mauvais login ou mot de passe !" + err,
+          })
+        );
       });
   };
 
   //validation des données
-  validate = (values) => {
+  const validate = (values) => {
     let errors = {};
     if (!values.username && values.username.length < 3) {
       errors.username = "Nom trop court";
@@ -57,82 +59,84 @@ export default class Login extends Component {
     return errors;
   };
 
-  render() {
-    //si authentifié, on redirige vers /
-    if (this.state.auth) {
-      return <Navigate to="/" />;
-    }
-    //sinon on affiche le formulaire
-    return (
-      <>
-        {this.state.loaded ? (
-          <Loading />
-        ) : (
-          <div className="container-fluid p-5 d-flex flex-column justify-content-center align-items-center">
-            {/* affichage du message d'erreur */}
-            {this.state.errorMessage && (
-              <Alert message={this.state.errorMessage} color="danger" />
-            )}
-
-            <Formik
-              onSubmit={this.submit}
-              initialValues={{ username: "", password: "" }}
-              validate={this.validate}
-            >
-              {({
-                values,
-                handleBlur,
-                handleChange,
-                handleSubmit,
-                isSubmitting,
-                errors,
-                touched,
-              }) => (
-                <form
-                  onSubmit={handleSubmit}
-                  className="bg-white border p-5 d-flex flex-column"
+  //Affichage du formulaire
+  return (
+    <>
+      {loaded ? (
+        <Loading />
+      ) : (
+        <div className="container-fluid p-5 d-flex flex-column justify-content-center align-items-center">
+          {/* affichage de l'alert */}
+          {alert ? <Alert /> : null}
+          <Formik
+            onSubmit={submit}
+            initialValues={{ username: "", password: "" }}
+            validate={validate}
+          >
+            {({
+              values,
+              handleBlur,
+              handleChange,
+              handleSubmit,
+              isSubmitting,
+              errors,
+              touched,
+            }) => (
+              <form
+                onSubmit={handleSubmit}
+                className="bg-white border p-5 d-flex flex-column"
+              >
+                <div className="form-group">
+                  <label>Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    className="form-control"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.username}
+                  />
+                  {errors.username && touched.username && (
+                    <div className="text-danger">{errors.username}</div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label>Mot de passe</label>
+                  <input
+                    type="password"
+                    name="password"
+                    className="form-control"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
+                  />
+                  {errors.password && touched.password && (
+                    <div className="text-danger">{errors.password}</div>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isSubmitting}
                 >
-                  <div className="form-group">
-                    <label>Username</label>
-                    <input
-                      type="text"
-                      name="username"
-                      className="form-control"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.username}
-                    />
-                    {errors.username && touched.username && (
-                      <div className="text-danger">{errors.username}</div>
-                    )}
-                  </div>
-                  <div className="form-group">
-                    <label>Mot de passe</label>
-                    <input
-                      type="password"
-                      name="password"
-                      className="form-control"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.password}
-                    />
-                    {errors.password && touched.password && (
-                      <div className="text-danger">{errors.password}</div>
-                    )}                    
-                  </div>
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={isSubmitting}
-                  >
-                    Envoyer
-                  </button>
-                </form>
-              )}
-            </Formik>
-          </div>
-        )}
-      </>
-    );
-  }
+                  Envoyer
+                </button>
+              </form>
+            )}
+          </Formik>
+        </div>
+      )}
+    </>
+  );
 }
+
+//création de la requete pour récuperer user
+export const fetchUser = (data) => {
+  axios.get(
+    process.env.REACT_APP_SERVER_NAME +
+      "/api/users/" +
+      data.data.userid +
+      "?jwt=" +
+      data.token
+  );
+};

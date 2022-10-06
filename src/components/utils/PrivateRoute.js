@@ -7,12 +7,14 @@ export default function PrivateRoute({children}) {
 
     const location = useLocation();
 
-    if(location.pathname === '/login'){
-        if(cookies.get('BEARER')){
+     if(location.pathname === '/login'){
+        // instruction si le cookie existe
+        if(cookies.get('APICOOKIE')){
             return <Navigate replace to="/" />
         }
     }else{
-        if(!cookies.get('BEARER')){
+        // instruction si le cookie n'existe pas
+        if(!cookies.get('APICOOKIE')){
             return <Navigate replace to="/login" />
         }
     }

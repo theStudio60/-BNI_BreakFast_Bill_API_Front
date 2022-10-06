@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Formik, Field } from "formik";
-import apiBni, { apiBni_Parser } from "../../conf/axios/api.bni";
-import { Loading, Alert } from "../../components/utils";
+import apiBni, { apiBniFile } from "../../conf/axios/api.bni";
 import * as Yup from "yup";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -28,15 +27,10 @@ export default class CustomerNew extends Component {
     const formdata = new FormData();
     let file = document.querySelector("#vcardfile");
     formdata.append("file", file.files[0])
-    axios.post(process.env.REACT_APP_SERVER_NAME+"/api/vcard/parser", formdata, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: "Bearer " + Cookies.get("BEARER")
-    }
-    })
+    apiBniFile
+      .post("/vcard/parser", formdata)
     .then((response) => {
       if (response.status === 200) {
-        console.log(response.data.data);
         const data = response.data.data;
         actions.isSubmitting = false;
         actions.resetForm();
@@ -55,7 +49,7 @@ export default class CustomerNew extends Component {
         });
       }
     })
-    //si erreur on update le state pour mettre un message d'erreur
+    //Erreur
     .catch((err) => {
       actions.isSubmitting = false;
     });
@@ -72,7 +66,7 @@ export default class CustomerNew extends Component {
           // actions.resetForm();
         }
       })
-      //si erreur on update le state pour mettre un message d'erreur
+      //si erreur
       .catch((err) => {
         actions.isSubmitting = false;
       });
@@ -110,7 +104,7 @@ export default class CustomerNew extends Component {
   });
 
   render() {
-    //on affiche le formulaire
+    //Affichage du formulaire
     return (
       <>
           <div className="container-fluid p-5 d-flex flex-column justify-content-center align-items-center">
@@ -281,6 +275,7 @@ export default class CustomerNew extends Component {
               )}
             </Formik>
 
+            {/* affichage fu formulaire pour fichier Vcard */}
             <Formik
               onSubmit={this.submitFile}
               initialValues={{ file: "" }}
