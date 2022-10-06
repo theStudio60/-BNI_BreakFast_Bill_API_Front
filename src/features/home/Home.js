@@ -8,8 +8,8 @@ import { useSelector } from "react-redux";
 export default function Home() {
 
   return (
-    <div className="container">
-      <div className="row bg-secondary">
+    <div className="home">
+      <div className="home--header">
         <Header />
       </div>
       <div className="row">

@@ -1,0 +1,38 @@
+.header--logo {
+  font-size: 45px;
+  padding: 5px;
+  background-color: grey;
+  height: 100%;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.header--button--menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 10px;
+}
+
+.header--button--icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: white;
+}
+
+.header--buttons-icons-gr {
+  font-size: 25px;
+}/*# sourceMappingURL=App.css.map */
