@@ -8,8 +8,9 @@ import { setAlert, setUser } from "../../redux";
 import Cookies from "js-cookie";
 
 export default function Home() {
+
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);   
+  const user = useSelector((state) => state.user);  
 
     //création de notre requete API avec useEffect
     useEffect(() => {
@@ -17,25 +18,27 @@ export default function Home() {
           dispatch(FetchUser());
       }
     }, []); 
+    
 
   //si l'utilisateur n'est pas encore charger on affiche le loading
   if(user.data){
   return (
-    <div className="container">
-      <div>
+    <>
+      <header className="header">
         <Header />
-      </div>
-      <div className="row">
-        <div className="col-4 bg-warning">
+      </header>
+      <div className="app_container">
+        <div className="row">
           <SideBar />
-        </div>
-        <div className="col-8">
-          {/* affichage des alerts */}
-          <Alert />
-          <AppRoutes />
-        </div>
+          <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            {/* affichage des alerts */}
+            <Alert />
+            {/* Affichage des liens */}
+            <AppRoutes />
+        </main>
       </div>
     </div>
+    </>
   );
   }else{
     return <Loading />

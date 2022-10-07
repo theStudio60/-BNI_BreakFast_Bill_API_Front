@@ -1,11 +1,35 @@
 .header{
-    height: 100px;
+    @extend
+    .navbar,
+    .navbar-dark,
+    .sticky-top,
+    .bg-dark,
+    .flex-md-nowrap,
+    .p-0,
+    .shadow;
+    height: 60px;
     background-color: $white;
-    .header--title{
 
+    .header__image{
+        img{
+            margin:0;
+            padding: 0;
+            height: 60px;
+        }
     }
-    .header--image{
-        height: 60px;
-
+    
+    .header__nav{
+        @extend
+        .d-flex,
+        .flex-row;
+        button{
+            @extend
+            .d-flex,
+            .align-items-center,
+            .btn,
+            .btn-dark,
+            .btn-sm,
+            .px-3;
+        }        
     }
 }

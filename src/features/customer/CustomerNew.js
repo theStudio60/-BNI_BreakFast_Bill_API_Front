@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { Formik, Field } from "formik";
 import apiBni, { apiBniFile } from "../../conf/axios/api.bni";
 import * as Yup from "yup";
-import axios from "axios";
-import Cookies from "js-cookie";
 
 export default class CustomerNew extends Component {
   constructor(props) {
