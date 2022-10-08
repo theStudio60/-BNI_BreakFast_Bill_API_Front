@@ -23,7 +23,7 @@ export const fetchItems = () => {
   };
 };
 
-export default function ItemsList() {
+export default function ItemList() {
 
   const items = useSelector((state) => state.items.data);
   const dispatch = useDispatch();

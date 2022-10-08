@@ -11,7 +11,8 @@ import {
   SessionsList,
   SessionDetails,
 } from "../features/session";
-import { ItemsList, ItemNew, ItemDetails } from "../features/item";
+import { ItemList, ItemNew, ItemDetails } from "../features/item";
+import {BillList, BillDetails} from "../features/bill";
 
 export default function AppRoutes(){
 
@@ -47,12 +48,19 @@ export default function AppRoutes(){
         />
         <Route path="/new-session" element={<SessionNew />} />
         {/* Items */}
-        <Route path="/items" element={<ItemsList />} />
+        <Route path="/items" element={<ItemList />} />
         <Route
           path="/item/:id"
           element={<ItemDetails path={useParams()} />}
         />
         <Route path="/new-item" element={<ItemNew />} />        
+        {/* bills */}
+        <Route path="/bills" element={<BillList />} />
+        <Route
+          path="/bill/:id"
+          element={<BillDetails path={useParams()} />}
+        />
+        <Route path="/new-item" element={<ItemNew />} />          
       </Routes>        
     )
 }

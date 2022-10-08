@@ -6,3 +6,33 @@
 @import "./layouts/app_container.scss";
 @import "./layouts/header";
 @import "./layouts/left_menu";
+
+.app_table{
+    @extend
+    .table;
+    &__tr{
+        color:$limegreen;
+
+        &--inactive{
+            color:$red;
+        }
+    }
+}
+
+.app_badge{
+    &--success{
+        @extend
+        .badge,
+        .text-bg-success;
+    }
+    &--info{
+        @extend
+        .badge,
+        .text-bg-info;
+    }
+    &--danger{
+        @extend
+        .badge,
+        .text-bg-danger;
+    }        
+}

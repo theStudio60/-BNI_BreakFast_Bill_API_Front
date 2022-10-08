@@ -113,6 +113,22 @@ const UserSlice = createSlice({
 });
 
 export const { setUser } = UserSlice.actions;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// Bill
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const BillSlice = createSlice({
+  name: "bill",
+  initialState: [],
+  reducers: {
+    setBill: (state, action) => {
+      return { ...action.payload };  
+    }      
+  },
+});
+
+export const { setBill } = BillSlice.actions;
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create store
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,6 +142,7 @@ export const store = configureStore({
     sessionPlaces: sessionPlacesSlice.reducer,
     sessionTypes: sessionsTypeSlice.reducer,
     user: UserSlice.reducer,
+    bills: BillSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({

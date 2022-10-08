@@ -5,6 +5,8 @@ import { NavLink } from "react-router-dom";
 import apiBni from "../../conf/axios/api.bni";
 import { setAlert, setCustomers } from "../../redux";
 import { Loading } from "../../components/utils";
+import {FaEye} from 'react-icons/fa';
+import dateFormat from "dateformat"
 
 //création de la requete
 const fetchCustomers = () => {
@@ -36,14 +38,50 @@ export default function CustomerList() {
   if(customers){
     return (
       <>
+      <table className="app_table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Prénom</th>
+            <th>nom</th>
+            <th>Ville</th>
+            <th>Date entrée</th>
+            <th>Date sortie</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
         {customers["hydra:member"].map((customer, index) => (
-          <NavLink to={"/customer/" + customer.id} className="nav-link" key={customer.id}>
-            {customer.id+" - "+customer.firstname+" "+customer.lastname}
-          </NavLink>
+            <CustomerListUnit customer={customer} key={customer.id} />
         ))}
+        </tbody>
+        </table>
       </>
     );
   }else{
     return <Loading />
   }
+}
+
+function CustomerListUnit(props){
+
+  const dateDay = new Date();
+  const membreDone = new Date(props.customer.membership.membership_done_at);
+
+  let trStyle = "app_table__tr";
+  if(dateDay > membreDone){
+    trStyle = "app_table__tr--inactive";
+  }
+
+  return (
+    <tr className={trStyle}>
+      <th scope="row">{props.customer.id}</th>
+      <td>{props.customer.firstname}</td>
+      <td>{props.customer.lastname}</td>
+      <td>{props.customer.zip_code+" "+props.customer.city}</td>
+      <td>{dateFormat(props.customer.membership.membership_at, "dd.mm.yyyy")}</td>
+      <td>{dateFormat(props.customer.membership.membership_done_at, "dd.mm.yyyy")}</td>
+      <td><NavLink to={"/customer/" + props.customer.id} className="nav-link" key={props.customer.id}><FaEye /></NavLink></td>
+    </tr>
+  )
 }
