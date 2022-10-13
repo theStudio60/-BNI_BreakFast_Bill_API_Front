@@ -12,7 +12,7 @@ import {
   SessionDetails,
 } from "../features/session";
 import { ItemList, ItemNew, ItemDetails } from "../features/item";
-import {BillList, BillDetails} from "../features/bill";
+import {BillList, BillDetails, BillGenerate} from "../features/bill";
 
 export default function AppRoutes(){
 
@@ -60,7 +60,7 @@ export default function AppRoutes(){
           path="/bill/:id"
           element={<BillDetails path={useParams()} />}
         />
-        <Route path="/new-item" element={<ItemNew />} />          
+        <Route path="/generate-bill" element={<BillGenerate />} />          
       </Routes>        
     )
 }

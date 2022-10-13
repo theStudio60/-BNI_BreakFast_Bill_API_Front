@@ -6,7 +6,6 @@ import apiBni from "../../conf/axios/api.bni";
 import { setAlert, setBill } from "../../redux";
 import { Loading } from "../../components/utils";
 import {FaEye} from 'react-icons/fa';
-import dateFormat from "dateformat"
 
 //création de la requete
 const fetchBills = () => {
@@ -69,7 +68,7 @@ function BillListUnit(props){
   //Définition du type de badge en fonction du statut de la facture
   let badgeStyle = "app_badge--info";
   let badgeText = "En attente";
-  if(dateDay > billingDate){
+  if(dateDay > new Date(billingDate)){
     badgeStyle = "app_badge--danger";
     badgeText = "Expirée";
   }

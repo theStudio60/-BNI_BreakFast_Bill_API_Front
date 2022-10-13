@@ -15,7 +15,7 @@ export default function SideBar() {
         <NavLink to="/items" className="nav-link">Items</NavLink>
         <NavLink to="/new-item" className="nav-link">Nouveau item</NavLink>       
         <NavLink to="/bills" className="nav-link">Factures</NavLink>
-        <NavLink to="/new-bill" className="nav-link">Nouvelle facture</NavLink>   
+        <NavLink to="/generate-bill" className="nav-link">Generer les factures</NavLink>   
       </nav>
   );
 }

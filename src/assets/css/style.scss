@@ -2,19 +2,23 @@
 @import "../../../node_modules/bootstrap/scss/bootstrap";
 
 
-@import "variables";
+@import "variables.scss";
 @import "./layouts/app_container.scss";
-@import "./layouts/header";
-@import "./layouts/left_menu";
+@import "./layouts/header.scss";
+@import "./layouts/left_menu.scss";
+@import "./layouts/customer_details.scss";
 
 .app_table{
     @extend
     .table;
     &__tr{
-        color:$limegreen;
+        color:$black;
 
-        &--inactive{
+        &--red{
             color:$red;
+        }
+        &--green{
+            color:$limegreen;
         }
     }
 }

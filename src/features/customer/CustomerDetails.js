@@ -1,12 +1,15 @@
 import React, { Component } from "react";
 import apiBni from "../../conf/axios/api.bni";
-import { Loading, Alert } from "../../components/utils";
+import { Loading } from "../../components/utils";
+import CustomerLeftColumn from "./template/CustomerLeftColumn";
+import CustomerBillsList from "./template/CustomerBillsList";
+import CustomerInfo from "./template/CustomerInfo";
 
 export default class CustomerDetails extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { customer: null, errorMessage: null, loaded: true };
+    this.state = { customer: null, bills:null, loaded: true };
   }
 
   componentDidMount() {
@@ -20,28 +23,39 @@ export default class CustomerDetails extends Component {
       .then((response) => {
         if (response.status === 200) {
           const customer = response.data;
-          this.setState({ customer: customer, loaded: false });
+          this.setState({ customer: customer});
         }
       })
       //si customer pas valide on update le state pour mettre un message d'erreur
       .catch((err) => {
-        this.setState({ errorMessage: "Une erreur est survenue !", loaded: false });
+        console.log(err)
       });
+
+      apiBni
+      .get("/bills?customer.id="+id, {})
+      .then((response) => {
+        if (response.status === 200) {
+          const bills = response.data;
+          this.setState({ bills: bills, loaded: false });
+        }
+      })
+      //si customer pas valide on update le state pour mettre un message d'erreur
+      .catch((err) => {
+        console.log(err)
+      });      
   }
 
   render() {
-    return (
-      <>
-        {/* affichage du message d'erreur */}
-        {this.state.errorMessage && (
-          <Alert message={this.state.errorMessage} color="danger" />
-        )}      
-        {this.state.loaded || this.state.customer === null ? (
-          <Loading />
-        ) : (
-          this.state.customer.id+' - '+this.state.customer.firstname
-        )}
-      </>
+    if(this.state.loaded || this.state.customer === null){
+      return <Loading />
+    }
+
+    return (    
+          <div className="row ">      
+          <CustomerLeftColumn customer={this.state.customer} />
+          <CustomerBillsList bills={this.state.bills} />
+          <CustomerInfo customer={this.state.customer} />
+          </div>
     );
   }
 }

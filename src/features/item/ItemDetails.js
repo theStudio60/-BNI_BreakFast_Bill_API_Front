@@ -3,12 +3,9 @@ import apiBni from "../../conf/axios/api.bni";
 import { Loading, Alert } from "../../components/utils";
 
 export default class ItemDetails extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { item: null, errorMessage: null, loaded: true };
-  }
 
-  componentDidMount() {
+
+  useEffect() {
     //Récupère le id en découpant la route
     let path = this.props.path['*'];
     const id = path.split("/")[1];

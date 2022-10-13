@@ -68,9 +68,9 @@ function CustomerListUnit(props){
   const dateDay = new Date();
   const membreDone = new Date(props.customer.membership.membership_done_at);
 
-  let trStyle = "app_table__tr";
+  let trStyle = "app_table__tr--green";
   if(dateDay > membreDone){
-    trStyle = "app_table__tr--inactive";
+    trStyle = "app_table__tr--red";
   }
 
   return (
