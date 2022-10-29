@@ -1,6 +1,6 @@
 
-import dateFormat from "dateformat";
 import { useSelector } from "react-redux";
+import { DateFormat } from "../../../components/utils/DateFormat";
 
 export default function BillInfo(props){
     const bill = props.bill;
@@ -43,10 +43,10 @@ export default function BillInfo(props){
             <p className="column__description">{balance}</p>
 
             <p className="column__title">Date facturation :</p>
-            <p className="column__description">{dateFormat(bill.from_at, "dd.mm.yyyy")}</p>
+            <p className="column__description"><DateFormat date={bill.from_at} format="dd.mm.yyyy" /></p>
 
             <p className="column__title">Payable jusque au :</p>
-            <p className="column__description">{dateFormat(bill.to_at, "dd.mm.yyyy")}</p>
+            <p className="column__description"><DateFormat date={bill.to_at} format="dd.mm.yyyy" /></p>
 
           </div>
         )
