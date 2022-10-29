@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import apiBni from "../../conf/axios/api.bni";
@@ -7,12 +7,15 @@ import { setAlert, setCustomers } from "../../redux";
 import { Loading } from "../../components/utils";
 import {FaEye} from 'react-icons/fa';
 import dateFormat from "dateformat"
+import Pagintation from "../../components/utils/Pagination";
+import { DateFormat } from "../../components/utils/DateFormat";
+
 
 //création de la requete
-const fetchCustomers = () => {
+const fetchCustomers = (link) => {
   return async (dispatch) => {
     await apiBni
-      .get("/customers?page=1&itemsPerPage=30")
+      .get(link)
       .then((response) => {
         if (response.status === 200) {
           dispatch(setCustomers(response));
@@ -27,17 +30,22 @@ const fetchCustomers = () => {
 
 export default function CustomerList() {
 
+  const [itemPerPage, setItemPerPage] = useState(10)
+  const [addFilter, setAddFilter] = useState("")
+  const link = "/customers";
   const customers = useSelector((state) => state.customers.data);
   const dispatch = useDispatch();
 
+
   //création de notre requete API avec useEffect
   useEffect(() => {
-    dispatch(fetchCustomers());
+    dispatch(fetchCustomers(link+"?page=1&itemsPerPage="+itemPerPage+addFilter));
   }, []);
 
   if(customers){
     return (
       <>
+      <ButtonsTris link={link} itemPerPage={itemPerPage} setAddFilter={setAddFilter} />
       <table className="app_table">
         <thead>
           <tr>
@@ -56,6 +64,7 @@ export default function CustomerList() {
         ))}
         </tbody>
         </table>
+          <Pagintation link={link} itemPerPage={itemPerPage} whatToDispatch={fetchCustomers} elem={customers} />
       </>
     );
   }else{
@@ -79,9 +88,28 @@ function CustomerListUnit(props){
       <td>{props.customer.firstname}</td>
       <td>{props.customer.lastname}</td>
       <td>{props.customer.zip_code+" "+props.customer.city}</td>
-      <td>{dateFormat(props.customer.membership.membership_at, "dd.mm.yyyy")}</td>
-      <td>{dateFormat(props.customer.membership.membership_done_at, "dd.mm.yyyy")}</td>
+      <td><DateFormat date={props.customer.membership.membership_at} format="dd.mm.yyyy" /></td>
+      <td><DateFormat date={props.customer.membership.membership_done_at} format="dd.mm.yyyy" /></td>
       <td><NavLink to={"/customer/" + props.customer.id} className="nav-link" key={props.customer.id}><FaEye /></NavLink></td>
     </tr>
+  )
+}
+
+function ButtonsTris({setAddFilter, link, itemPerPage}){
+  const dispatch = useDispatch();
+
+  const addFilter = (e) => {
+    let filter = e.target.dataset.filter;
+    setAddFilter("&membership.is_active=true");
+    dispatch(fetchCustomers(link+"?page=1&itemsPerPage="+itemPerPage+filter));
+  }
+
+
+  return(
+    <div className="d-flex justify-content-center mt-4 mb-4">
+      <button className="btn btn-outline-success" onClick={addFilter} data-filter="&membership.is_active=true" >Membre actif</button>
+      <button className="btn btn-outline-danger" onClick={addFilter} data-filter="&membership.is_active=false">Membre inactif</button>
+    </div>
+    // &membership.is_active=false
   )
 }

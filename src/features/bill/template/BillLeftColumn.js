@@ -1,13 +1,10 @@
-export default function CustomerLeftColumn(props){
+export default function BillLeftColumn(props){
 
     const customer = props.customer;
 
     return(
             <div className="column column--lg_3">              
-                <h3>Nom du client</h3>
-                
-                  <p className="column__title">customer N° :</p>
-                  <p className="column__description">{customer.id}</p>
+                <h3>Détails client</h3>
 
                   <p className="column__title">Entreprise :</p>
                   <p className="column__description">{customer.company}</p>

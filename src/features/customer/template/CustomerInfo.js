@@ -1,36 +1,64 @@
 
-import dateFormat from "dateformat";
+import { useSelector } from "react-redux";
+import { DateFormat } from "../../../components/utils/DateFormat";
+import {FaSearch} from 'react-icons/fa';
 
-export default function CustomerInfo(props){
-    const customer = props.customer;
 
-    let customerActive = <span className="badge text-bg-success">Activé</span>
+export default function CustomerInfo({customer}){
+
+    const user = useSelector((state) => state.user.data);
+
+
+    let customerActive = <span className="app_badge app_badge--success">Membre actif</span>
     if(!customer.membership.is_active){
-        customerActive = <span className="badge text-bg-danger">Desactivé</span>
+        customerActive = <span className="app_badge app_badge--danger">Membre inactif</span>
     }
 
     return (
-        <div className="column column--lg_3">
-          <h3>Info client</h3>
+      <>
+      <div className="customer_row">
+        <div className="customer_row__column--sm customer_search_bar">
+          Rechercher&nbsp;<FaSearch />&nbsp;<input type="text"></input>
+        </div>           
+      </div>
 
-            <p className="column__title">Status client :</p>
-            <p className="column__description">{ customerActive }</p>
+        <div className="customer_row">
 
-
-            <p className="column__title">Crée par :</p>
-              <p className="column__description">{customer.created_by.firstname} {customer.created_by.lastname}</p>
-
-
-            <p className="column__title">Membre depuis :</p>
-            <p className="column__description">{dateFormat(customer.membership.membership_at, "dd.mm.yyyy")}</p>
-
-            <p className="column__title">Membre jusque :</p>
-            <p className="column__description">{dateFormat(customer.membership.membership_done_at, "dd.mm.yyyy")}</p>
-
-
-            <div className="text-center">
-              <a href="#" className="btn btn-block btn-outline-primary">Edit customer</a>
-            </div>
+          <div className="customer_row__column--sm column_center__row">
+            <p>{ customer.company }</p>
+            <img className="img--rounded" src={ process.env.REACT_APP_SERVER_NAME +"/img/bggrey.jpg" } alt="logo" />
+          </div>          
+          
+          <div className="customer_row__column--sm column_bottom">
+            <p className="">N°{ customer.id }</p>
+            <p className="">{ customer.firstname }</p>
+            <p className="">{ customer.lastname }</p>
           </div>
+
+          <div className="customer_row__column--sm column_bottom">
+            <p className="">{ customer.street } { customer.street_number}</p>
+            <p className="">{customer.zip_code}</p>
+            <p className="">{customer.city}</p>
+          </div>
+
+          <div className="customer_row__column--sm column_bottom">
+            {customerActive}
+            <p className="">Date d'entrée :</p>
+            <p className="">Date de sortie :</p>
+          </div>
+
+          <div className="customer_row__column--sm column_bottom">
+            <p className=""><DateFormat date={customer.membership.membership_at} format="dd.mm.yyyy" /></p>
+            <p className=""><DateFormat date={customer.membership.membership_done_at} format="dd.mm.yyyy" /></p>
+          </div>          
+        </div>      
+
+        <div className="customer_row">
+          <div className="customer_row__column--sm customer_buttons">
+            <button className="customer_buttons--success">Modifier</button>
+            <button className="customer_buttons--danger">Supprimer</button>
+          </div>           
+        </div>        
+          </>    
         )
 }

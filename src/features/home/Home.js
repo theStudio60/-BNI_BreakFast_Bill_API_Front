@@ -34,7 +34,9 @@ export default function Home() {
             {/* affichage des alerts */}
             <Alert />
             {/* Affichage des liens */}
-            <AppRoutes />
+            <div className="row justify-content-md-center">
+              <AppRoutes />
+            </div>
         </main>
       </div>
     </div>

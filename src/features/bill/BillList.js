@@ -1,17 +1,18 @@
 import { useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import apiBni from "../../conf/axios/api.bni";
 import { setAlert, setBill } from "../../redux";
 import { Loading } from "../../components/utils";
 import {FaEye} from 'react-icons/fa';
+import Pagintation from "../../components/utils/Pagination";
 
 //création de la requete
-const fetchBills = () => {
+const fetchBills = (link) => {
   return async (dispatch) => {
     await apiBni
-      .get("/bills?page=1&itemsPerPage=30")
+      .get(link)
       .then((response) => {
         if (response.status === 200) {
           dispatch(setBill(response));
@@ -26,12 +27,14 @@ const fetchBills = () => {
 
 export default function BillList() {
 
+  const [itemPerPage, setItemPerPage] = useState(10)
+  const link = "/bills";
   const bills = useSelector((state) => state.bills.data);
   const dispatch = useDispatch();
 
   //création de notre requete API avec useEffect
   useEffect(() => {
-    dispatch(fetchBills());
+    dispatch(fetchBills(link+"?page=1&itemsPerPage="+itemPerPage));
   }, []);
 
   if(bills){
@@ -48,11 +51,12 @@ export default function BillList() {
           </tr>
         </thead>
         <tbody>
-        {bills["hydra:member"].map((bill, index) => (
+        {bills["hydra:member"].map((bill) => (
             <BillListUnit bill={bill} key={bill.id} />
         ))}
         </tbody>
         </table>
+        <Pagintation link={link} itemPerPage={itemPerPage} whatToDispatch={fetchBills} elem={bills} />
       </>
     );
   }else{

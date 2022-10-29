@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import apiBni from "../../conf/axios/api.bni";
 import { Loading, Alert } from "../../components/utils";
+import BillLeftColumn from "./template/BillLeftColumn";
+import BillDetailsFacturation from "./template/BillDetailsFacturation";
+import BillInfo from "./template/BillInfo";
 
 export default class BillDetails extends Component {
 
@@ -25,22 +28,19 @@ export default class BillDetails extends Component {
       })
       //si customer pas valide on update le state pour mettre un message d'erreur
       .catch((err) => {
-        this.setState({ errorMessage: "Une erreur est survenue !", loaded: false });
+        alert("Une erreur est survenue !"+err)
       });
   }
 
   render() {
+    if(this.state.loaded || !this.state.bill){
+      return <Loading />
+    }
     return (
       <>
-        {/* affichage du message d'erreur */}
-        {this.state.errorMessage && (
-          <Alert message={this.state.errorMessage} color="danger" />
-        )}      
-        {this.state.loaded || this.state.customer === null ? (
-          <Loading />
-        ) : (
-          this.state.bill.id+' - '+this.state.bill.amount
-        )}
+          <BillLeftColumn customer={this.state.bill.customer} />
+          <BillDetailsFacturation bill={this.state.bill} />
+          <BillInfo bill={this.state.bill} />
       </>
     );
   }

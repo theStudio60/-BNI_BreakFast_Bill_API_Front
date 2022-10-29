@@ -20,6 +20,11 @@ export default class CustomerNew extends Component {
     document.getElementById("fileForm").style.cssText = "display:flex";
   }
 
+  closeVcard() {
+    document.getElementById("fileForm").style.cssText = "display:none !important";
+    document.getElementById("newCustomerForm").style.cssText = "display:flex";
+  }
+
   //fonction envoi de la vcard
   submitFile = (values, actions) => {
     const formdata = new FormData();
@@ -104,8 +109,7 @@ export default class CustomerNew extends Component {
   render() {
     //Affichage du formulaire
     return (
-      <>
-          <div className="container-fluid p-5 d-flex flex-column justify-content-center align-items-center">
+      <div className="form form--lg_8">
             <Formik
               onSubmit={this.submit}
               initialValues={{
@@ -133,10 +137,10 @@ export default class CustomerNew extends Component {
               }) => (
                 <form
                   onSubmit={handleSubmit}
-                  className="bg-white border p-5 d-flex flex-column"
+                  className="form__row"
                   id="newCustomerForm"
                 >
-                  <div className="form-group">
+                  <div className="form__column--lg-6">
                     <label>Prénom</label>
                     <Field
                       name="firstname"
@@ -149,7 +153,7 @@ export default class CustomerNew extends Component {
                       <div className="text-danger">{errors.firstname}</div>
                     )}
                   </div>
-                  <div className="form-group">
+                  <div className="form__column--lg-6">
                     <label>Nom</label>
                     <Field
                       name="lastname"
@@ -162,7 +166,7 @@ export default class CustomerNew extends Component {
                       <div className="text-danger">{errors.lastname}</div>
                     )}
                   </div>
-                  <div className="form-group">
+                  <div className="form__column--lg-8">
                     <label>Rue</label>
                     <Field
                       name="street"
@@ -175,7 +179,7 @@ export default class CustomerNew extends Component {
                       <div className="text-danger">{errors.street}</div>
                     )}
                   </div>
-                  <div className="form-group">
+                  <div className="form__column--lg-4">
                     <label>Numéro de rue</label>
                     <Field
                       name="streetNumber"
@@ -188,7 +192,7 @@ export default class CustomerNew extends Component {
                       <div className="text-danger">{errors.streetNumber}</div>
                     )}
                   </div>
-                  <div className="form-group">
+                  <div className="form__column--lg-4">
                     <label>Code postal</label>
                     <Field
                       type="number"
@@ -202,7 +206,7 @@ export default class CustomerNew extends Component {
                       <div className="text-danger">{errors.zipCode}</div>
                     )}
                   </div>
-                  <div className="form-group">
+                  <div className="form__column--lg-8">
                     <label>Ville</label>
                     <Field
                       name="city"
@@ -215,7 +219,7 @@ export default class CustomerNew extends Component {
                       <div className="text-danger">{errors.city}</div>
                     )}
                   </div>
-                  <div className="form-group">
+                  <div className="form__column--lg-12">
                     <label>Entreprise</label>
                     <Field
                       name="company"
@@ -228,7 +232,7 @@ export default class CustomerNew extends Component {
                       <div className="text-danger">{errors.company}</div>
                     )}
                   </div>
-                  <div className="form-group">
+                  <div className="form__column--lg-8">
                     <label>Email</label>
                     <Field
                       name="email"
@@ -241,7 +245,7 @@ export default class CustomerNew extends Component {
                       <div className="text-danger">{errors.email}</div>
                     )}
                   </div>
-                  <div className="form-group">
+                  <div className="form__column--lg-4">
                     <label>Membre depuis</label>
                     <Field
                       name="memberShip_at"
@@ -256,14 +260,14 @@ export default class CustomerNew extends Component {
                   </div>
                   <button
                     type="submit"
-                    className="btn btn-primary"
+                    className="button"
                     disabled={isSubmitting}
                   >
                     Enregistrer
                   </button>
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="button"
                     disabled={isSubmitting}
                     onClick={this.openVcard}
                   >
@@ -290,10 +294,10 @@ export default class CustomerNew extends Component {
               }) => (
                 <form
                   onSubmit={handleSubmit}
-                  className="bg-white border p-5 d-flex flex-column"
+                  className="form__row"
                   id="fileForm"
-                >
-                  <div className="form-group">
+                >           
+                  <div className="form__column--lg-10">
                     <input
                       type="file"
                       name="file"
@@ -302,6 +306,7 @@ export default class CustomerNew extends Component {
                       onChange={handleChange}
                       onBlur={handleBlur}
                       value={values.file}
+                      required
                     />
                     {errors.file && touched.file && (
                       <div className="text-danger">{errors.file}</div>
@@ -309,16 +314,22 @@ export default class CustomerNew extends Component {
                   </div>
                   <button
                     type="submit"
-                    className="btn btn-primary"
+                    className="button"
                     disabled={isSubmitting}
                   >
                     Charger
                   </button>
+                  <input
+                    type="button"                    
+                    className="button button--red"
+                    disabled={isSubmitting}
+                    value="Annuler"
+                    onClick={this.closeVcard}
+                  />                
                 </form>
               )}
             </Formik>
-          </div>
-      </>
+      </div>
     );
   }
 }

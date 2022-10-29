@@ -29,12 +29,14 @@ export default function CustomerBillsList(props){
                                 }
 
                             return (
+                                
                                 <tr key={bill.id}>
                                     <th><NavLink to={"/bill/" + bill.id} className="nav-link">{bill.billNumber}</NavLink></th>
                                     <td>{user.association.bankInformation.currency} {bill.amount}</td>
                                     <td>{dateFormat(bill.to_at, "dd.mm.yyyy")}</td>
                                     <td><span className={badgeStyle}>{badgeText}</span></td>
                                 </tr>
+                                
                             );
                         })}
                     </tbody>

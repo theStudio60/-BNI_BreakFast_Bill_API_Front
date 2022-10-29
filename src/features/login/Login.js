@@ -5,6 +5,7 @@ import cookies from "js-cookie";
 import { Loading, Alert } from "../../components/utils";
 import { useDispatch } from "react-redux";
 import { setAlert } from "../../redux";
+import {FaUser, FaLock} from 'react-icons/fa';
 
 export default function Login(props) {
   const [loaded, setLoaded] = useState(false);
@@ -86,11 +87,13 @@ export default function Login(props) {
                 onSubmit={handleSubmit}
                 className="bg-white border p-5 d-flex flex-column"
               >
-                <div className="form-group">
-                  <label>Username</label>
+
+                <div className="input-group">
+                  <div className="input-group-text" id="btnGroupAddon"><FaUser /></div>
                   <input
                     type="text"
                     name="username"
+                    placeholder="Username"
                     className="form-control"
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -100,11 +103,12 @@ export default function Login(props) {
                     <div className="text-danger">{errors.username}</div>
                   )}
                 </div>
-                <div className="form-group">
-                  <label>Mot de passe</label>
+                <div className="input-group">
+                <div className="input-group-text" id="btnGroupAddon"><FaLock /></div>
                   <input
                     type="password"
                     name="password"
+                    placeholder="Password"
                     className="form-control"
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -119,7 +123,7 @@ export default function Login(props) {
                   className="btn btn-primary"
                   disabled={isSubmitting}
                 >
-                  Envoyer
+                  Login
                 </button>
               </form>
             )}

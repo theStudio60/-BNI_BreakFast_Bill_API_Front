@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Formik, Field } from "formik";
 import apiBni from "../../../conf/axios/api.bni";
 import * as Yup from "yup";
-
 import { useDispatch } from "react-redux";
 import { setAlert } from "../../../redux";
-
+import { useSearchParams } from "react-router-dom";
 
 export default function SessiontypeNew() {
 
   const [stOptions, setStOptions] = useState([]);
+  const [date, setDate] = useState();
+  let [searchParams, setSearchParams] = useSearchParams();
 
   const dispatch = useDispatch()
 
@@ -68,7 +69,7 @@ export default function SessiontypeNew() {
             <Formik
               onSubmit={submit}
               initialValues={{
-                dayAt: "",
+                dayAt: searchParams.get("date"),
                 toDone: 1,
                 sessionType_id: "",
               }}

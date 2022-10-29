@@ -51,11 +51,11 @@ export default class CustomerDetails extends Component {
     }
 
     return (    
-          <div className="row ">      
-          <CustomerLeftColumn customer={this.state.customer} />
-          <CustomerBillsList bills={this.state.bills} />
+        <>
           <CustomerInfo customer={this.state.customer} />
-          </div>
+          {/* <CustomerLeftColumn customer={this.state.customer} />
+          <CustomerBillsList bills={this.state.bills} /> */}
+        </>
     );
   }
 }
